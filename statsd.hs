@@ -17,7 +17,8 @@ import Text.ParserCombinators.Parsec.Number
 -- TODO: 
 -- 1) fix non-tail recursive function to use map/fold/anything else really
 -- 2) implement timers support.
--- 3) implement outbound tcp support.  
+-- 3) implement outbound tcp support.
+-- 4) fix gauges, shouldn't clear when we send data onwards.
 
 data AggregationFunction = Counter | SampledCounter Float | Timing | Gauge | Sets deriving Show
 data Metric = Metric {name :: String, value :: Float} deriving Show
