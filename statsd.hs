@@ -94,12 +94,9 @@ main = do
         return sock 
 
 udpServer :: Socket -> (String -> IO()) -> IO ()
-udpServer sock parser = do
-    dataread <- tryJust (guard . isEOFError) $ recvFrom sock 4096
-    case dataread of
-        Right (msg, bytesread, addr) -> parser msg
-        Left s -> print "Bah"
-    udpServer sock parser
+udpServer sock parser = forever $ do
+    (msg, bytesread, addr) <- recvFrom sock 4096
+    parser msg
 
 tcpServer :: (Socket, SockAddr) -> (String -> IO()) -> IO ()
 tcpServer (sock, sockAddr) parser = do
@@ -126,7 +123,6 @@ aggregator ch aggFunc metricFunc aggs = do
    where
     aggregate (Datapoint _ m) funk =
         atomically $ readTVar aggs >>= writeTVar aggs . (insertWith funk (name m) (value m))
-
 
 -- TODO: make this actually calculate stuff. Also, it should be timers, not sets.
 calculateSetsValues :: Map String [a] -> Map String [a]
